@@ -1,0 +1,19 @@
+{
+  "name": "Cosmic Keys · Clef Command",
+  "short_name": "Cosmic Keys",
+  "description": "Play real piano notes to blast space monsters. Clef Command educational game 01.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#05081a",
+  "theme_color": "#05081a",
+  "categories": ["education", "games", "music"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

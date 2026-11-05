@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05081a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cosmic Keys">
+<meta name="description" content="Cosmic Keys: play real piano notes to blast space monsters. Clef Command educational game 01.">
+<title>Cosmic Keys · Clef Command</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preload" href="fonts/jersey10-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/lobster-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="bg" class="layer" aria-hidden="true"></canvas>
+    <canvas id="piano" class="layer" aria-hidden="true"></canvas>
+    <canvas id="mon" class="layer" aria-hidden="true"></canvas>
+    <canvas id="game" class="layer" aria-hidden="true"></canvas>
+    <canvas id="hands" class="layer" aria-hidden="true"></canvas>
+    <canvas id="fx" class="layer" aria-hidden="true"></canvas>
+  </div>
+
+  <!-- In-game HUD -->
+  <header id="hud" class="hidden" aria-live="polite">
+    <div class="hud-block hud-left">
+      <div class="hud-level"><span id="hud-level">Level 1</span><span class="hud-sep" aria-hidden="true">/</span><span id="hud-position" class="hud-pos">C Position</span></div>
+      <div class="hud-progress" aria-hidden="true"><div id="hud-progress-fill"></div></div>
+      <div class="hud-meta"><span id="hud-progress-text">0 / 8</span><span class="hud-rank">Rank <b id="hud-rank">Tuning Up</b></span></div>
+    </div>
+    <div class="hud-block hud-right">
+      <div id="hud-shields" class="shields" role="img" aria-label="Keyboard health"></div>
+      <button id="btn-pause" class="icon-btn" aria-label="Pause"><span class="pause-glyph"></span></button>
+    </div>
+  </header>
+
+  <div id="heard" class="heard hidden" aria-live="polite">
+    <span class="mic-dot"></span><span class="heard-label">Listening</span><b id="heard-note">–</b>
+  </div>
+
+
+  <!-- Title -->
+  <section id="screen-title" class="screen">
+    <div class="title-wrap">
+      <div class="series"><span class="series-name">Clef Command</span><span class="series-sub">Educational Game Series</span></div>
+      <h1 class="logo" aria-label="Cosmic Keys">
+        <canvas id="logo-art" aria-hidden="true"></canvas>
+        <span id="logo-text" class="logo-script" aria-hidden="true"><span class="w">Cosmic</span><span class="gap"></span><span class="w">Keys</span></span>
+      </h1>
+      <p class="tagline">Play real piano notes to blast mischievous space monsters!</p>
+      <div class="title-buttons">
+        <button id="btn-start" class="btn btn-gold btn-big"><svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5 L16.5 10 L5 16.5 Z" fill="currentColor"/></svg><span>Play</span></button>
+        <div class="title-row">
+          <button id="btn-settings" class="btn btn-blue"><svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><g fill="currentColor"><circle cx="10" cy="10" r="5.6"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(0 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(45 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(90 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(135 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(180 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(225 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(270 10 10)"/><rect x="8.4" y="1.2" width="3.2" height="4" rx="0.8" transform="rotate(315 10 10)"/></g><circle cx="10" cy="10" r="2.3" fill="#0b1236"/></svg><span>Settings</span></button>
+          <button id="btn-ranks" class="btn btn-blue"><svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><g fill="currentColor"><rect x="3" y="11" width="3.4" height="6" rx="0.8"/><rect x="8.3" y="7" width="3.4" height="10" rx="0.8"/><rect x="13.6" y="3" width="3.4" height="14" rx="0.8"/></g></svg><span>Ranks</span></button>
+          <button id="btn-install" class="btn btn-blue hidden"><svg class="ico" viewBox="0 0 20 20" aria-hidden="true"><g fill="currentColor"><rect x="8.4" y="2" width="3.2" height="9" rx="0.8"/><path d="M4.6 9.2 L10 14.6 L15.4 9.2 Z"/><rect x="3" y="15.6" width="14" height="2.6" rx="0.8"/></g></svg><span>Install</span></button>
+        </div>
+      </div>
+      <div id="title-summary" class="chips" aria-label="Current settings"></div>
+      <p class="mic-note"><span class="mic-icon" aria-hidden="true"></span>Uses your microphone to hear your piano or keyboard. Place your device near the instrument.</p>
+      <p id="install-hint" class="install-note hidden">Play it like an app: tap <b>Share</b>, then <b>Add to Home Screen</b>.</p>
+    </div>
+  </section>
+
+  <!-- Ranks -->
+  <section id="screen-ranks" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="ranks-title">
+    <div class="panel ranks-panel">
+      <h2 id="ranks-title" class="classic-title">Ranks</h2>
+      <p class="help">Clear a level to earn its rank. The first six are named for musical dynamics, from very soft to very loud.</p>
+      <ol id="ranks-list" class="ranks-list"></ol>
+      <div class="panel-actions">
+        <button id="btn-ranks-done" class="btn btn-gold">Done</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section id="screen-settings" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="panel settings-panel">
+      <h2 id="settings-title">Settings</h2>
+      <div class="setting">
+        <div class="setting-label">Hands</div>
+        <div class="seg" data-setting="hands">
+          <button data-value="left">Left only</button>
+          <button data-value="right">Right only</button>
+          <button data-value="both">Both hands</button>
+        </div>
+      </div>
+      <div class="setting">
+        <div class="setting-label">Accidentals <small>(sharps &amp; flats outside the position's key)</small></div>
+        <div class="seg" data-setting="accidentals">
+          <button data-value="false">Exclude</button>
+          <button data-value="true">Include</button>
+        </div>
+      </div>
+      <div class="setting">
+        <div class="setting-label">Hand position</div>
+        <div class="seg seg-wrap" data-setting="positionMode">
+          <button data-value="keep">Keep one position</button>
+          <button data-value="change">Change each level</button>
+          <button data-value="free">No hand position</button>
+        </div>
+        <p id="mode-help" class="help"></p>
+      </div>
+      <div class="setting" id="setting-position">
+        <div class="setting-label" id="position-label">Position</div>
+        <div class="seg seg-keys" data-setting="startPosition"></div>
+      </div>
+      <div class="setting two-col">
+        <label class="slider"><span>Music</span><input id="vol-music" type="range" min="0" max="1" step="0.05"></label>
+        <label class="slider"><span>Effects</span><input id="vol-sfx" type="range" min="0" max="1" step="0.05"></label>
+      </div>
+      <div class="setting mic-test">
+        <div class="setting-label">Microphone check</div>
+        <div class="mic-row">
+          <div class="meter" aria-hidden="true"><div id="mic-meter-fill"></div></div>
+          <div class="mic-heard">Heard: <b id="mic-heard">–</b></div>
+        </div>
+        <div class="mic-row">
+          <select id="mic-select" aria-label="Microphone" class="hidden"></select>
+          <button id="btn-mic-test" class="btn btn-small">Test microphone</button>
+        </div>
+        <p id="mic-status" class="help">Play any note. It should show up above.</p>
+      </div>
+      <div class="panel-actions">
+        <button id="btn-settings-done" class="btn btn-gold">Done</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Microphone permission / errors -->
+  <section id="screen-mic" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="mic-title">
+    <div class="panel small-panel">
+      <div class="big-icon mic-icon-big" aria-hidden="true"></div>
+      <h2 id="mic-title">Microphone needed</h2>
+      <p id="mic-message">Cosmic Keys listens to your piano through the microphone. Please allow microphone access when your browser asks.</p>
+      <div class="panel-actions">
+        <button id="btn-mic-retry" class="btn btn-gold">Try again</button>
+        <button id="btn-mic-cancel" class="btn btn-ghost">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pause -->
+  <section id="screen-pause" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+    <div class="panel small-panel">
+      <h2 id="pause-title">Paused</h2>
+      <div class="setting two-col">
+        <label class="slider"><span>Music</span><input id="vol-music-p" type="range" min="0" max="1" step="0.05"></label>
+        <label class="slider"><span>Effects</span><input id="vol-sfx-p" type="range" min="0" max="1" step="0.05"></label>
+      </div>
+      <div class="panel-actions column">
+        <button id="btn-resume" class="btn btn-gold">Resume</button>
+        <button id="btn-restart" class="btn btn-ghost">Restart level</button>
+        <button id="btn-quit" class="btn btn-ghost">Quit to title</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Level transition -->
+  <section id="screen-transition" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="tr-title">
+    <div class="panel transition-panel">
+      <div class="lu-scenery" id="lu-scenery" aria-hidden="true"></div>
+      <div class="lu-head">
+        <span class="laurel" aria-hidden="true"></span>
+        <div class="lu-head-text">
+          <h2 id="tr-title" class="lu-title">Level Up!</h2>
+          <div id="tr-kicker" class="lu-kicker">Level 1 Complete!</div>
+        </div>
+        <span class="laurel flip" aria-hidden="true"></span>
+      </div>
+      <div class="lu-body">
+        <figure class="painting">
+          <div class="frame"><canvas id="tr-portrait" width="256" height="256" aria-hidden="true"></canvas></div>
+          <figcaption id="tr-pianist" class="pianist-name"></figcaption>
+        </figure>
+        <div class="lu-right">
+          <blockquote class="quote"><p id="tr-line" class="pianist-line"></p></blockquote>
+          <div class="rank-frame">
+            <canvas id="tr-clef" width="64" height="96" aria-hidden="true"></canvas>
+            <div class="rank-text">
+              <div class="rank-label">Your Rank:</div>
+              <div id="tr-rank" class="rank-name">Pianissimo</div>
+              <div id="tr-rank-note" class="rank-note"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="tr-shield" class="shield-note hidden"></div>
+      <div class="now-playing"><span class="np-icon" aria-hidden="true">♫</span><span>Victory cue: <b id="tr-piece"></b> <span id="tr-composer"></span></span></div>
+      <div id="tr-next-pos" class="help center"></div>
+      <div class="panel-actions">
+        <button id="btn-next" class="btn btn-gold btn-big">Next Level</button>
+        <button id="btn-tr-menu" class="btn btn-ghost hidden">Main Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game over -->
+  <section id="screen-gameover" class="screen modal hidden" role="dialog" aria-modal="true" aria-labelledby="go-title">
+    <div class="panel small-panel">
+      <div class="kicker danger">Three cracked keys</div>
+      <h2 id="go-title">Keyboard Broken!</h2>
+      <p id="go-text">The monsters smashed the keyboard this time. Take a breath and try again!</p>
+      <div class="panel-actions column">
+        <button id="btn-retry" class="btn btn-gold">Try Level 1 Again</button>
+        <button id="btn-go-menu" class="btn btn-ghost">Main Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="rotate" class="rotate hidden">
+    <div class="rotate-icon" aria-hidden="true"></div>
+    <p>Turn your device sideways for the biggest keyboard.</p>
+    <button id="btn-rotate-ok" class="btn btn-small btn-ghost">Play anyway</button>
+  </div>
+
+  <div id="dev-badge" class="dev-badge hidden">No piano handy? Keys A–K play C4–C5 (Z/X change octave), or click the on-screen keys</div>
+  <noscript><div class="noscript">Cosmic Keys needs JavaScript enabled.</div></noscript>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/motion.js"></script>
+<script src="js/view3d.js"></script>
+<script src="js/theory.js"></script>
+<script src="js/content.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/pitch.js"></script>
+<script src="js/portraits.js"></script>
+<script src="js/world.js"></script>
+<script src="js/glworld.js"></script>
+<script src="js/titleart.js"></script>
+<script src="js/monster.js"></script>
+<script src="js/hands.js"></script>
+<script src="js/glhands.js"></script>
+<script src="js/glmonsters.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

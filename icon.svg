@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <rect width="64" height="64" rx="12" fill="#0d0b2e"/>
+  <rect x="6" y="38" width="52" height="20" fill="#eef2fb"/>
+  <g fill="#10121c"><rect x="13" y="38" width="5" height="12"/><rect x="23" y="38" width="5" height="12"/><rect x="38" y="38" width="5" height="12"/><rect x="47" y="38" width="5" height="12"/></g>
+  <g fill="#0a0d20"><rect x="20" y="50" width="1" height="8"/><rect x="31" y="38" width="1" height="20"/><rect x="44" y="50" width="1" height="8"/></g>
+  <rect x="6" y="36" width="52" height="2" fill="#7ff3ff"/>
+  <ellipse cx="32" cy="18" rx="13" ry="11" fill="#43e07a"/>
+  <rect x="24" y="14" width="5" height="5" fill="#fffbe2"/><rect x="35" y="14" width="5" height="5" fill="#fffbe2"/>
+  <rect x="26" y="15" width="2" height="3" fill="#12101c"/><rect x="37" y="15" width="2" height="3" fill="#12101c"/>
+  <rect x="25" y="23" width="14" height="3" fill="#3b0d2a"/>
+  <rect x="27" y="23" width="2" height="2" fill="#fff"/><rect x="35" y="23" width="2" height="2" fill="#fff"/>
+  <rect x="31" y="29" width="2" height="7" fill="#38e8ff"/>
+</svg>
